@@ -66,11 +66,11 @@ public class Connection implements GridElement {
                     gc.strokeLine(x, y1, x, y2);
                 }
                 case 3 -> {
-                    gc.strokeLine(x, y1, x, y2);;
+                    gc.strokeLine(x, y1, x, y2);
                     x -= 5;
-                    gc.strokeLine(x, y1, x, y2);;
+                    gc.strokeLine(x, y1, x, y2);
                     x += 10;
-                    gc.strokeLine(x, y1, x, y2);;
+                    gc.strokeLine(x, y1, x, y2);
                 }
             }
         }
@@ -122,6 +122,11 @@ public class Connection implements GridElement {
     @Override
     public boolean isClazz(Class<?> gridclass) {
         return getClass() == gridclass;
+    }
+
+    @Override
+    public Vector2D getBoxVec() {
+        return boxVec;
     }
 
     public void increment() {

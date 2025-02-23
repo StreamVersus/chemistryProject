@@ -3,50 +3,57 @@ package pr.vladimir.demo1;
 import pr.vladimir.demo1.Tiles.Carbon;
 import pr.vladimir.demo1.Tiles.GridElement;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
-import static pr.vladimir.demo1.Frontend.gridSize;
-import static pr.vladimir.demo1.Frontend.screenSize;
-import static pr.vladimir.demo1.Tiles.Carbon.idList;
+import static pr.vladimir.demo1.Backend.getMatrix;
+import static pr.vladimir.demo1.Tiles.Connection.castTo;
 
 public class Logic {
-    public final static Integer[][] relativityMatrix;
-    public static GridElement[][] cachedGrid;
-    static {
-        var carbAmount = idList.size();
-        relativityMatrix = new Integer[carbAmount][carbAmount];
+    public static Map<Carbon, List<Carbon>> relativityMap = new HashMap<>();
 
-        int gridHeight = (int) (screenSize.getX() / gridSize);
-        int gridWidth = (int) (screenSize.getY() / gridSize);
-        cachedGrid = new GridElement[gridHeight][gridWidth];
+    public static void updateRelMat(GridElement obj) {
+         if(obj == null) return;
+
+         var lookupList = recursiveWalk(obj);
+         System.out.println(lookupList);
+         if(obj instanceof Carbon carbon) {
+             relativityMap.put(carbon, lookupList);
+         }
+
+         for (Carbon carbon : lookupList) {
+             var copiedList = new ArrayList<>(List.copyOf(lookupList));
+             copiedList.remove(carbon);
+             relativityMap.put(carbon, copiedList);
+         }
     }
 
-    public static void updateRelMat(GridElement[][] grid) {
-
-
-
-    }
-
-    private static List<Carbon> recursiveWalk(GridElement point) {
-        return null;
-    }
-
-    public static GridElement[][] cacheDiff(GridElement[][] grid) {
-        GridElement[][] retMat = grid.clone();
-        for (int i = 0; i < cachedGrid.length; i++) {
-           var line = cachedGrid[i];
-           for (int i1 = 0; i1 < line.length; i1++) {
-                var cachedElem = line[i1];
-                var gridElem = retMat[i][i1];
-                if(cachedElem == null || gridElem == null) continue;
-
-                if(Objects.equals(gridElem.toString(), cachedElem.toString())) retMat[i][i1] = null;
-            }
+    private static List<Carbon> recursiveWalk(GridElement point, Boolean... blocks) {
+        var boxVec = point.getBoxVec();
+        var paddedBlocks = new Boolean[4];
+        System.arraycopy(blocks, 0, paddedBlocks, 0, blocks.length);
+        for (int i = 0; i < paddedBlocks.length; i++) {
+           if(paddedBlocks[i] == null) paddedBlocks[i] = false;
         }
 
-        cachedGrid = Arrays.stream(grid).map(GridElement[]::clone).toArray(_ -> grid.clone());
-        return null;
+        GridElement top = null, bot = null, left = null, right = null;
+        if(boxVec.getY() > 0) top = paddedBlocks[0] ? null : getMatrix(new Vector2D(boxVec.getX(), boxVec.getY()-1));
+        if(boxVec.getY() < 18) bot = paddedBlocks[1] ? null : getMatrix(new Vector2D(boxVec.getX(), boxVec.getY()+1));
+        if(boxVec.getX() > 0) left = paddedBlocks[2] ? null : getMatrix(new Vector2D(boxVec.getX()-1, boxVec.getY()));
+        if(boxVec.getX() < 24) right = paddedBlocks[3] ? null : getMatrix(new Vector2D(boxVec.getX()+1, boxVec.getY()));
+        var carbList = castTo(Carbon.class, top, bot, left, right);
+
+        List<Carbon> retList = new ArrayList<>(carbList);
+        GridElement[] surroundings = new GridElement[4]; surroundings[0] = top; surroundings[1] = bot; surroundings[2] = left; surroundings[3] = right;
+        for (int i = 0; i < surroundings.length; i++) {
+           var elem = surroundings[i];
+           if(elem == null) continue;
+           if(elem.isClazz(Carbon.class)) continue;
+           retList.addAll(recursiveWalk(elem, i == 1, i == 0, i == 3, i == 2));
+        }
+
+        return retList;
     }
 }

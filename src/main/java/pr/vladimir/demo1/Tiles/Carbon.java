@@ -26,9 +26,9 @@ public class Carbon implements GridElement {
             if(i != count) break;
             count++;
         }
-        id = count;
-        idList.put(id, this);
         System.out.println(idList.keySet());
+        id = count;
+
         this.boxVec = boxVec;
 
         GridElement top = null, bot = null, left = null, right = null;
@@ -39,6 +39,8 @@ public class Carbon implements GridElement {
         var carbList = castTo(Carbon.class, top, bot, left, right);
 
         if(!carbList.isEmpty()) return;
+        idList.put(id, this);
+
         setMatrix(boxVec, this);
         update();
     }
@@ -69,6 +71,13 @@ public class Carbon implements GridElement {
         gc.fillText(text,
                 textX,
                 textY);
+
+        if(isVerbose) {
+            gc.setStroke(Color.RED);
+            gc.fillText(String.valueOf(id),
+                    textX,
+                    textY - 15);
+        }
     }
 
     @Override
@@ -83,8 +92,6 @@ public class Carbon implements GridElement {
         if(boxVec.getY() < 18) bot = getMatrix(new Vector2D(boxVec.getX(), boxVec.getY()+1));
         if(boxVec.getX() > 0) left = getMatrix(new Vector2D(boxVec.getX()-1, boxVec.getY()));
         if(boxVec.getX() < 24) right = getMatrix(new Vector2D(boxVec.getX()+1, boxVec.getY()));
-
-
 
         if(bot != null && !bot.isClazz(Carbon.class)) {
             bot.update();
@@ -110,6 +117,12 @@ public class Carbon implements GridElement {
     public boolean isClazz(Class<?> gridclass) {
         return getClass() == gridclass;
     }
+
+    @Override
+    public Vector2D getBoxVec() {
+        return boxVec;
+    }
+
     private void clear() {
         var gc = canvas.getGraphicsContext2D();
         var boxCoordVec = new Vector2D(boxVec.getX() * gridSize, boxVec.getY() * gridSize);

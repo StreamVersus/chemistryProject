@@ -4,8 +4,6 @@ import pr.vladimir.demo1.Tiles.Carbon;
 import pr.vladimir.demo1.Tiles.Connection;
 import pr.vladimir.demo1.Tiles.GridElement;
 
-import java.util.Arrays;
-
 import static pr.vladimir.demo1.Frontend.*;
 
 public class Backend {
@@ -36,7 +34,7 @@ public class Backend {
 
     public static void setMatrix(Vector2D vec, GridElement i) {
         formulaMatrix[(int) vec.getX()][(int) vec.getY()] = i;
-        Logic.cacheDiff(formulaMatrix);
+        Logic.updateRelMat(i);
     }
 
     public static GridElement getMatrix(Vector2D vec) {

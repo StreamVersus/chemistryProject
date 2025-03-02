@@ -1,7 +1,7 @@
 package pr.vladimir.demo1.Tiles;
 
 import javafx.scene.paint.Color;
-import pr.vladimir.demo1.Vector2D;
+import pr.vladimir.demo1.API.Vector2D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ public class Connection implements GridElement {
     public int value = 1;
     public boolean isVertical = false;
     private boolean canUpdate = true;
+    private static final List<Connection> conList = new ArrayList<>();
 
     public Connection(Vector2D boxVec) {
         this.boxVec = boxVec;
@@ -24,6 +25,9 @@ public class Connection implements GridElement {
         if(boxVec.getY() < 18) bot = getMatrix(new Vector2D(boxVec.getX(), boxVec.getY()+1));
         if(boxVec.getX() > 0) left = getMatrix(new Vector2D(boxVec.getX()-1, boxVec.getY()));
         if(boxVec.getX() < 24) right = getMatrix(new Vector2D(boxVec.getX()+1, boxVec.getY()));
+        var conList = castTo(Connection.class, top, bot, left, right);
+        if(!conList.isEmpty()) return;
+
         var carbList = castTo(Carbon.class, top, bot, left, right);
         for (Carbon carbon : carbList) {
             if(carbon.hydroCount == 0) {
@@ -31,6 +35,7 @@ public class Connection implements GridElement {
                 break;
             }
         }
+        Connection.conList.add(this);
 
         if(!isAble) return;
         setMatrix(boxVec, this);
@@ -148,6 +153,7 @@ public class Connection implements GridElement {
                setMatrix(boxVec, null);
                update();
                clear();
+               conList.remove(this);
            }
         }
 
@@ -174,5 +180,11 @@ public class Connection implements GridElement {
            } catch (Exception ignored) {}
         }
         return retlist;
+    }
+
+    public static void updateAll() {
+        for (Connection connection : conList) {
+          connection.update();
+        }
     }
 }

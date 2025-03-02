@@ -1,32 +1,27 @@
 package pr.vladimir.demo1;
 
+import pr.vladimir.demo1.API.Tree;
+import pr.vladimir.demo1.API.Vector2D;
 import pr.vladimir.demo1.Tiles.Carbon;
 import pr.vladimir.demo1.Tiles.GridElement;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static pr.vladimir.demo1.Backend.getMatrix;
 import static pr.vladimir.demo1.Tiles.Connection.castTo;
 
 public class Logic {
-    public static Map<Carbon, List<Carbon>> relativityMap = new HashMap<>();
+    public static Tree tree = new Tree();
 
-    public static void updateRelMat(GridElement obj) {
-         if(obj == null) return;
-
-         var lookupList = recursiveWalk(obj);
-         System.out.println(lookupList);
-         if(obj instanceof Carbon carbon) {
-             relativityMap.put(carbon, lookupList);
+    public static void updateRelMat(GridElement before, GridElement after) {
+         if(after == null) {
+             if(before instanceof Carbon carbon) tree.removeVertex(carbon);
+             return;
          }
 
-         for (Carbon carbon : lookupList) {
-             var copiedList = new ArrayList<>(List.copyOf(lookupList));
-             copiedList.remove(carbon);
-             relativityMap.put(carbon, copiedList);
+         var lookupList = recursiveWalk(after);
+         if(after instanceof Carbon carbon) {
+             tree.addEdge(carbon, lookupList.toArray(Carbon[]::new));
          }
     }
 
@@ -55,5 +50,12 @@ public class Logic {
         }
 
         return retList;
+    }
+
+    public static void treeAnalysis() {
+        List<Carbon> longestPath = tree.findLongestPath();
+        for (Carbon carbon : longestPath) {
+            carbon.renderAnnotation(String.valueOf(longestPath.indexOf(carbon)));
+        }
     }
 }

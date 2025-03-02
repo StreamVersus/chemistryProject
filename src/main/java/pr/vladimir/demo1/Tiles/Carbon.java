@@ -3,17 +3,17 @@ package pr.vladimir.demo1.Tiles;
 import javafx.geometry.VPos;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import pr.vladimir.demo1.Vector2D;
+import pr.vladimir.demo1.API.Vector2D;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static pr.vladimir.demo1.Frontend.*;
 import static pr.vladimir.demo1.Backend.*;
-import static pr.vladimir.demo1.Tiles.Connection.castTo;
 
 public class Carbon implements GridElement {
-    public static Map<Integer, Carbon> idList = new HashMap<>();
+    public static Map<Integer, Carbon> idMap = new HashMap<>();
     public int id;
     private final Vector2D boxVec;
     private boolean canUpdate = true;
@@ -22,24 +22,15 @@ public class Carbon implements GridElement {
 
     public Carbon(Vector2D boxVec) {
         int count = 0;
-        for (Integer i : idList.keySet()) {
+        for (Integer i : idMap.keySet()) {
             if(i != count) break;
             count++;
         }
-        System.out.println(idList.keySet());
+        System.out.println(idMap.keySet());
         id = count;
 
         this.boxVec = boxVec;
-
-        GridElement top = null, bot = null, left = null, right = null;
-        if(boxVec.getY() > 0) top = getMatrix(new Vector2D(boxVec.getX(), boxVec.getY()-1));
-        if(boxVec.getY() < 18) bot = getMatrix(new Vector2D(boxVec.getX(), boxVec.getY()+1));
-        if(boxVec.getX() > 0) left = getMatrix(new Vector2D(boxVec.getX()-1, boxVec.getY()));
-        if(boxVec.getX() < 24) right = getMatrix(new Vector2D(boxVec.getX()+1, boxVec.getY()));
-        var carbList = castTo(Carbon.class, top, bot, left, right);
-
-        if(!carbList.isEmpty()) return;
-        idList.put(id, this);
+        idMap.put(id, this);
 
         setMatrix(boxVec, this);
         update();
@@ -73,10 +64,7 @@ public class Carbon implements GridElement {
                 textY);
 
         if(isVerbose) {
-            gc.setStroke(Color.RED);
-            gc.fillText(String.valueOf(id),
-                    textX,
-                    textY - 15);
+            renderAnnotation(String.valueOf(id));
         }
     }
 
@@ -134,9 +122,31 @@ public class Carbon implements GridElement {
     }
 
     public void destroy() {
-        idList.remove(id);
+        idMap.remove(id);
         clear();
         isForRemoval = true;
         setMatrix(boxVec, null);
+    }
+
+    public static Carbon getByID(int id) {
+        return idMap.get(id);
+    }
+
+    public void renderAnnotation(String print) {
+        if(isVerbose && !Objects.equals(print, String.valueOf(id))) return;
+
+        var boxCoordVec = new Vector2D(boxVec.getX() * gridSize, boxVec.getY() * gridSize);
+        var gc = canvas.getGraphicsContext2D();
+        var textX = boxCoordVec.getX() + gridSize / 2F;
+        var textY = boxCoordVec.getY() + gridSize / 2F;
+
+        gc.clearRect(boxCoordVec.getX() + 2,
+                boxCoordVec.getY() + 2,
+                gridSize - 5,
+                15);
+
+        gc.fillText(String.valueOf(print),
+                textX,
+                textY - 15);
     }
 }

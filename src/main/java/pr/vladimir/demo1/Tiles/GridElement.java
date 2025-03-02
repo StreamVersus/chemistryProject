@@ -1,6 +1,6 @@
 package pr.vladimir.demo1.Tiles;
 
-import pr.vladimir.demo1.Vector2D;
+import pr.vladimir.demo1.API.Vector2D;
 
 public interface GridElement {
     void canUpdate();

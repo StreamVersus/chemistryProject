@@ -40,7 +40,8 @@ public class Logic {
         if(boxVec.getX() < 24) right = paddedBlocks[3] ? null : getMatrix(new Vector2D(boxVec.getX()+1, boxVec.getY()));
         var carbList = castTo(Carbon.class, top, bot, left, right);
 
-        List<Carbon> retList = new ArrayList<>(carbList);
+        List<Carbon> retList = new ArrayList<>();
+        if(!point.isClazz(Carbon.class)) retList.addAll(carbList);
         GridElement[] surroundings = new GridElement[4]; surroundings[0] = top; surroundings[1] = bot; surroundings[2] = left; surroundings[3] = right;
         for (int i = 0; i < surroundings.length; i++) {
            var elem = surroundings[i];
@@ -53,9 +54,18 @@ public class Logic {
     }
 
     public static void treeAnalysis() {
-        List<Carbon> longestPath = tree.findLongestPath();
+        List<List<Carbon>> longestPaths = tree.findAllLongestPaths();
+        List<Carbon> crossections = tree.findCrosssections();
+
+        List<Carbon> longestPath = Tree.findPathWithClosestPoint(longestPaths, crossections);
+        if(longestPath == null) return;
+
+        if(longestPath.getFirst().id > longestPath.getLast().id) longestPath = longestPath.reversed();
+
         for (Carbon carbon : longestPath) {
             carbon.renderAnnotation(String.valueOf(longestPath.indexOf(carbon)));
         }
+
+
     }
 }

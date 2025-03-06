@@ -174,17 +174,17 @@ public class Connection implements GridElement {
     public static <T> List<T> castTo(Class<T> castClass, GridElement... elems) {
         List<T> retlist = new ArrayList<>();
         for (GridElement elem : elems) {
-           if(elem == null) continue;
-           try {
-               if(elem.isClazz(castClass)) retlist.add(castClass.cast(elem));
-           } catch (Exception ignored) {}
+            if(elem == null) continue;
+            try {
+                if(elem.isClazz(castClass)) retlist.add(castClass.cast(elem));
+            } catch (Exception _) {}
         }
         return retlist;
     }
 
     public static void updateAll() {
         for (Connection connection : conList) {
-          connection.update();
+            connection.update();
         }
     }
 }

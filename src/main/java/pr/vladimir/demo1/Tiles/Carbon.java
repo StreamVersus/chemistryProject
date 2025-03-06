@@ -26,9 +26,8 @@ public class Carbon implements GridElement {
             if(i != count) break;
             count++;
         }
-        System.out.println(idMap.keySet());
-        id = count;
 
+        id = count;
         this.boxVec = boxVec;
         idMap.put(id, this);
 
@@ -72,7 +71,6 @@ public class Carbon implements GridElement {
     public void update() {
         if(!canUpdate) return;
         canUpdate = false;
-
         hydroCount = 4;
 
         GridElement top = null, bot = null, left = null, right = null;

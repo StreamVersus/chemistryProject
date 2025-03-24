@@ -1,6 +1,6 @@
-package pr.vladimir.demo1.Tiles;
+package pr.vladimir.chemistry.Tiles;
 
-import pr.vladimir.demo1.API.Vector2D;
+import pr.vladimir.chemistry.API.Vector2D;
 
 public interface GridElement {
     void canUpdate();

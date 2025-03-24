@@ -1,11 +1,9 @@
-package pr.vladimir.demo1.API;
+package pr.vladimir.chemistry.API;
 
-import pr.vladimir.demo1.Tiles.Carbon;
+import pr.vladimir.chemistry.Tiles.Carbon;
+import pr.vladimir.chemistry.Tiles.FuncGroup;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Tree {
     private final Map<Integer, List<Integer>> adjacencyMap = new HashMap<>();
@@ -15,6 +13,12 @@ public class Tree {
             adjacencyMap.computeIfAbsent(u.id, _ -> new ArrayList<>()).add(value.id);
             adjacencyMap.computeIfAbsent(value.id, _ -> new ArrayList<>()).add(u.id);
         }
+    }
+
+    public void removeEdge(Carbon u, Carbon v) {
+        adjacencyMap.get(u.id).remove((Integer) v.id);
+        adjacencyMap.get(v.id).remove((Integer) u.id);
+        
     }
 
     public void removeVertex(Carbon u) {
@@ -27,43 +31,46 @@ public class Tree {
         }
     }
 
-    public static List<Carbon> findPathWithClosestPoint(List<List<Carbon>> pathsCarb, List<Carbon> pointsCarb) {
+    public List<Carbon> findLongestPath(List<List<Carbon>> pathsCarb, List<Carbon> pointsCarb) {
         if(pathsCarb == null) return null;
+        if(adjacencyMap.size() == 1) return List.of(Carbon.getByID(adjacencyMap.keySet().stream().toList().getFirst()));
 
         List<List<Integer>> paths = new ArrayList<>();
         for (List<Carbon> carbons : pathsCarb) {
             paths.add(carbons.stream().map(carb -> carb.id).toList());
         }
 
-        List<Integer> points = pointsCarb.stream().map(carb -> carb.id).toList();
+        List<Integer> points = new ArrayList<>(pointsCarb.stream().map(carb -> carb.id).toList());
 
         int minDistance = Integer.MAX_VALUE;
         List<Integer> closestPath = null;
 
         for (List<Integer> path : paths) {
             int currentMinDistance = Integer.MAX_VALUE;
-
+            boolean corrected = false;
             for (Integer point : points) {
                 if (path.contains(point)) {
                     int index = path.indexOf(point);
                     int distanceToEnd = path.size() - 1 - index;
-                    if(distanceToEnd > index) path = path.reversed();
-
+                    if(distanceToEnd > index) {
+                        path = path.reversed();
+                        corrected = true;
+                    }
                     currentMinDistance = Math.min(currentMinDistance, path.indexOf(point));
                 }
             }
-
+            if(!corrected && Carbon.getByID(path.getFirst()).getBoxVec().getX() > Carbon.getByID(path.getLast()).getBoxVec().getX()) path = path.reversed();
             if (currentMinDistance < minDistance) {
                 minDistance = currentMinDistance;
                 closestPath = path;
             }
         }
         if(points.isEmpty()) return pathsCarb.getFirst();
-        if(closestPath == null) throw new RuntimeException("idk");
+        if(closestPath == null) throw new RuntimeException("idc");
         return closestPath.stream().map(Carbon::getByID).toList();
     }
 
-    public List<Carbon> findCrosssections() {
+    public List<Carbon> findCrossections() {
         List<Carbon> retList = new ArrayList<>();
         adjacencyMap.keySet().forEach(i -> {
             List<Integer> list = adjacencyMap.get(i);
@@ -85,12 +92,11 @@ public class Tree {
 
         List<List<Integer>> longestPaths = new ArrayList<>();
         dfs(farthestNode, -1, new ArrayList<>(), longestPaths, maxDistance);
-        System.out.println(longestPaths);
+
         List<List<Carbon>> longestInCarbon = new ArrayList<>();
         for (List<Integer> longestPath : longestPaths) {
             longestInCarbon.add(longestPath.stream().map(Carbon::getByID).toList());
         }
-
 
         return longestInCarbon;
     }
@@ -106,6 +112,7 @@ public class Tree {
 
         for (int neighbor : adjacencyMap.getOrDefault(node, new ArrayList<>())) {
             if (neighbor != parent) {
+                if(Carbon.getByID(node) instanceof FuncGroup && !FuncGroup.lookup.get(FuncGroup.funcVar.state).contains("C")) return;
                 dfs(neighbor, node, currentPath, longestPaths, maxDistance);
             }
         }
@@ -140,5 +147,25 @@ public class Tree {
         }
 
         currentPath.removeLast();
+    }
+
+    public List<List<Carbon>> returnRadicals(List<Carbon> longestPath) {
+        List<List<Carbon>> retList = new ArrayList<>();
+        for (Carbon crossection : findCrossections()) {
+            List<Integer> temp = new ArrayList<>(adjacencyMap.get(crossection.id));
+
+            temp.remove((Integer) longestPath.get(longestPath.indexOf(crossection) - 1).id);
+            temp.remove((Integer) longestPath.get(longestPath.indexOf(crossection) + 1).id);
+
+            retList.add(temp.stream().map(Carbon::getByID).toList());
+        }
+        int i = 0;
+        for (List<Carbon> carbons : retList) {
+            for (Carbon carbon : carbons) {
+                carbon.renderAnnotation(String.valueOf(i));
+            }
+            i++;
+        }
+        return retList;
     }
 }

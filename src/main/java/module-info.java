@@ -1,14 +1,14 @@
-module pr.vladimir.demo {
+module pr.vladimir.chemistry {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
-    requires openj9.jvm;
+    //requires openj9.jvm;
 
-    exports pr.vladimir.demo1;
-    exports pr.vladimir.demo1.Tiles;
-    exports pr.vladimir.demo1.API;
+    exports pr.vladimir.chemistry;
+    exports pr.vladimir.chemistry.Tiles;
+    exports pr.vladimir.chemistry.API;
 
-    opens pr.vladimir.demo1 to javafx.fxml;
-    opens pr.vladimir.demo1.Tiles to javafx.fxml;
-    opens pr.vladimir.demo1.API to javafx.fxml;
+    opens pr.vladimir.chemistry to javafx.fxml;
+    opens pr.vladimir.chemistry.Tiles to javafx.fxml;
+    opens pr.vladimir.chemistry.API to javafx.fxml;
 }

@@ -1,4 +1,4 @@
-package pr.vladimir.demo1.API;
+package pr.vladimir.chemistry.API;
 
 public class Vector2D {
     private double x, y;

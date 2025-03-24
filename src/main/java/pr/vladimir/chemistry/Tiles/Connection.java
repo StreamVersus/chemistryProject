@@ -1,13 +1,12 @@
-package pr.vladimir.demo1.Tiles;
+package pr.vladimir.chemistry.Tiles;
 
 import javafx.scene.paint.Color;
-import pr.vladimir.demo1.API.Vector2D;
+import pr.vladimir.chemistry.API.Vector2D;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import static pr.vladimir.demo1.Backend.*;
-import static pr.vladimir.demo1.Frontend.*;
+import static pr.vladimir.chemistry.Backend.*;
+import static pr.vladimir.chemistry.Frontend.*;
 
 public class Connection implements GridElement {
     private final Vector2D boxVec;
@@ -15,6 +14,7 @@ public class Connection implements GridElement {
     public boolean isVertical = false;
     private boolean canUpdate = true;
     private static final List<Connection> conList = new ArrayList<>();
+    public static final Set<Connection> specialSet = new HashSet<>();
 
     public Connection(Vector2D boxVec) {
         this.boxVec = boxVec;
@@ -22,11 +22,14 @@ public class Connection implements GridElement {
 
         GridElement top = null, bot = null, left = null, right = null;
         if(boxVec.getY() > 0) top = getMatrix(new Vector2D(boxVec.getX(), boxVec.getY()-1));
-        if(boxVec.getY() < 18) bot = getMatrix(new Vector2D(boxVec.getX(), boxVec.getY()+1));
+        if(boxVec.getY() <= 18) bot = getMatrix(new Vector2D(boxVec.getX(), boxVec.getY()+1));
         if(boxVec.getX() > 0) left = getMatrix(new Vector2D(boxVec.getX()-1, boxVec.getY()));
-        if(boxVec.getX() < 24) right = getMatrix(new Vector2D(boxVec.getX()+1, boxVec.getY()));
+        if(boxVec.getX() <= 24) right = getMatrix(new Vector2D(boxVec.getX()+1, boxVec.getY()));
         var conList = castTo(Connection.class, top, bot, left, right);
         if(!conList.isEmpty()) return;
+
+        if(left == null && right == null) isVertical = bot != null || top != null;
+        else isVertical = false;
 
         var carbList = castTo(Carbon.class, top, bot, left, right);
         for (Carbon carbon : carbList) {
@@ -104,6 +107,8 @@ public class Connection implements GridElement {
 
     @Override
     public void update() {
+        specialSet.removeIf(connection -> connection.value == 1);
+
         if(!canUpdate) return;
         canUpdate = false;
 
@@ -135,10 +140,13 @@ public class Connection implements GridElement {
     }
 
     public void increment() {
+        if(value >= 1) specialSet.add(this);
         if(value == 3) {
             setMatrix(boxVec, null);
             update();
             clear();
+            specialSet.remove(this);
+            conList.remove(this);
         }
 
         GridElement top = null, bot = null, left = null, right = null;
@@ -153,6 +161,7 @@ public class Connection implements GridElement {
                setMatrix(boxVec, null);
                update();
                clear();
+               specialSet.remove(this);
                conList.remove(this);
            }
         }
@@ -182,9 +191,29 @@ public class Connection implements GridElement {
         return retlist;
     }
 
+    public static <T> T castTo(Class<T> castClass, GridElement elem) {
+        if(elem == null) return null;
+        if(elem.isClazz(castClass)) {
+            return castClass.cast(elem);
+        }
+        else return null;
+    }
+
     public static void updateAll() {
         for (Connection connection : conList) {
             connection.update();
         }
+    }
+
+    public Carbon[] getAdjacent() {
+        Carbon[] retArr = new Carbon[2];
+        if(isVertical) {
+            if (boxVec.getY() > 0) retArr[0] = castTo(Carbon.class, getMatrix(new Vector2D(boxVec.getX(), boxVec.getY() - 1)));
+            if (boxVec.getY() < 18) retArr[1] = castTo(Carbon.class, getMatrix(new Vector2D(boxVec.getX(), boxVec.getY() + 1)));
+        } else {
+            if (boxVec.getX() > 0) retArr[0] = castTo(Carbon.class, getMatrix(new Vector2D(boxVec.getX() - 1, boxVec.getY())));
+            if (boxVec.getX() < 24) retArr[1] = castTo(Carbon.class, getMatrix(new Vector2D(boxVec.getX() + 1, boxVec.getY())));
+        }
+        return retArr;
     }
 }

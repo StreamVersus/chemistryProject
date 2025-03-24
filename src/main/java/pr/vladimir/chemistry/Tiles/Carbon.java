@@ -1,16 +1,16 @@
-package pr.vladimir.demo1.Tiles;
+package pr.vladimir.chemistry.Tiles;
 
 import javafx.geometry.VPos;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import pr.vladimir.demo1.API.Vector2D;
+import pr.vladimir.chemistry.API.Vector2D;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static pr.vladimir.demo1.Frontend.*;
-import static pr.vladimir.demo1.Backend.*;
+import static pr.vladimir.chemistry.Frontend.*;
+import static pr.vladimir.chemistry.Backend.*;
 
 public class Carbon implements GridElement {
     public static Map<Integer, Carbon> idMap = new HashMap<>();
@@ -18,7 +18,8 @@ public class Carbon implements GridElement {
     private final Vector2D boxVec;
     private boolean canUpdate = true;
     public int hydroCount = 4;
-    public boolean isForRemoval = true;
+    public boolean isForRemoval = false;
+    public Integer state = 0;
 
     public Carbon(Vector2D boxVec) {
         int count = 0;
@@ -32,7 +33,7 @@ public class Carbon implements GridElement {
         idMap.put(id, this);
 
         setMatrix(boxVec, this);
-        update();
+        this.update();
     }
 
     @Override
@@ -101,7 +102,7 @@ public class Carbon implements GridElement {
 
     @Override
     public boolean isClazz(Class<?> gridclass) {
-        return getClass() == gridclass;
+        return Carbon.class == gridclass || FuncGroup.class == gridclass;
     }
 
     @Override
@@ -109,7 +110,7 @@ public class Carbon implements GridElement {
         return boxVec;
     }
 
-    private void clear() {
+    public void clear() {
         var gc = canvas.getGraphicsContext2D();
         var boxCoordVec = new Vector2D(boxVec.getX() * gridSize, boxVec.getY() * gridSize);
 

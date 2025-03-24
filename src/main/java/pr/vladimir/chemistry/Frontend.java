@@ -1,4 +1,4 @@
-package pr.vladimir.demo1;
+package pr.vladimir.chemistry;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -7,22 +7,27 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import pr.vladimir.demo1.API.Vector2D;
-import pr.vladimir.demo1.Tiles.GridElement;
+import pr.vladimir.chemistry.API.Vector2D;
+import pr.vladimir.chemistry.Tiles.GridElement;
 
 import java.io.IOException;
 import java.util.Objects;
 
-import static pr.vladimir.demo1.Backend.formulaMatrix;
+import static pr.vladimir.chemistry.Backend.formulaMatrix;
 
 public class Frontend extends Application {
 
     public static Canvas canvas;
+    public static ToggleButton carbonButton, funcButton;
+    public static Integer state = 0;
+    public static TextField field;
     private final Backend backend;
     public static final int gridSize = 50;
     public static final Vector2D screenSize = new Vector2D(1200, 900);
@@ -53,12 +58,52 @@ public class Frontend extends Application {
         pane.maxWidth(screenSize.getX());
         pane.maxHeight(screenSize.getY());
 
-        Button computeButton = new Button("Compute");
+        field = new TextField();
+        field.setLayoutX(7);
+        field.setLayoutY(7);
+        field.setMinWidth(300);
+        pane.getChildren().add(field);
+
+        Button computeButton = new Button("Вычислить");
+        computeButton.setFocusTraversable(false);
         pane.getChildren().add(computeButton);
-        computeButton.setLayoutX(7);
+        computeButton.setMinWidth(75);
+        computeButton.setLayoutX(315);
         computeButton.setLayoutY(7);
         computeButton.setOnAction(_ -> Logic.treeAnalysis());
 
+        carbonButton = new ToggleButton("Углерод");
+        pane.getChildren().add(carbonButton);
+        carbonButton.setFocusTraversable(false);
+        carbonButton.setMinWidth(70);
+        carbonButton.setLayoutX(410);
+        carbonButton.setLayoutY(7);
+        carbonButton.setSelected(true);
+        carbonButton.setOnAction(_ -> {
+            if(!carbonButton.isSelected()) {
+                carbonButton.setSelected(true);
+                return;
+            }
+            funcButton.setSelected(false);
+
+            state = 0;
+        });
+
+        funcButton = new ToggleButton("Функциональные группы");
+        pane.getChildren().add(funcButton);
+        funcButton.setFocusTraversable(false);
+        funcButton.setMinWidth(50);
+        funcButton.setLayoutX(490);
+        funcButton.setLayoutY(7);
+        funcButton.setOnAction(_ -> {
+            if(!funcButton.isSelected()) {
+                funcButton.setSelected(true);
+                return;
+            }
+            carbonButton.setSelected(false);
+
+            state = 1;
+        });
         drawGrid(canvas.getGraphicsContext2D());
     }
 
@@ -120,5 +165,9 @@ public class Frontend extends Application {
         };
         sleeper.setOnSucceeded(_ -> continuation.run());
         new Thread(sleeper).start();
+    }
+
+    public static void renderName(String name) {
+        field.setText(name);
     }
 }

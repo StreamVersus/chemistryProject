@@ -1,11 +1,12 @@
-package pr.vladimir.demo1;
+package pr.vladimir.chemistry;
 
-import pr.vladimir.demo1.API.Vector2D;
-import pr.vladimir.demo1.Tiles.Carbon;
-import pr.vladimir.demo1.Tiles.Connection;
-import pr.vladimir.demo1.Tiles.GridElement;
+import pr.vladimir.chemistry.API.Vector2D;
+import pr.vladimir.chemistry.Tiles.Carbon;
+import pr.vladimir.chemistry.Tiles.Connection;
+import pr.vladimir.chemistry.Tiles.FuncGroup;
+import pr.vladimir.chemistry.Tiles.GridElement;
 
-import static pr.vladimir.demo1.Frontend.*;
+import static pr.vladimir.chemistry.Frontend.*;
 
 public class Backend {
     public static GridElement[][] formulaMatrix = new GridElement[0][];
@@ -20,10 +21,18 @@ public class Backend {
 
     public void handleRMB(Vector2D boxVec) {
         var value = getMatrix(boxVec);
-        if(value == null || value.isClazz(Connection.class)) new Carbon(boxVec);
-        else if(value.isClazz(Carbon.class)) {
-            ((Carbon) value).destroy();
-            Connection.updateAll();
+        if(state == 0) {
+            if (value == null) new Carbon(boxVec);
+            else if (value.isClazz(Carbon.class)) {
+                ((Carbon) value).destroy();
+                Connection.updateAll();
+            }
+        }
+        else {
+            if (value == null) new FuncGroup(boxVec);
+            else if (value.isClazz(FuncGroup.class)) {
+                ((FuncGroup) value).increment();
+            }
         }
     }
 
@@ -37,6 +46,8 @@ public class Backend {
         GridElement before = getMatrix(vec);
         formulaMatrix[(int) vec.getX()][(int) vec.getY()] = i;
         Logic.updateRelMat(before, i);
+
+        if(i instanceof Connection c) Connection.specialSet.remove(c);
     }
 
     public static GridElement getMatrix(Vector2D vec) {

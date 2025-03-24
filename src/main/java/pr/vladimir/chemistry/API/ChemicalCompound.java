@@ -45,14 +45,13 @@ public class ChemicalCompound {
         StringBuilder prefix = new StringBuilder();
         Map<Integer, List<Integer>> organizedRadicals = organizeRadicals();
         if(organizedRadicals == null) return "";
-
         int in = 0;
         for (Map.Entry<Integer, List<Integer>> entry : new TreeMap<>(organizedRadicals).entrySet()) {
             int last = 0;
             var valueList = entry.getValue().stream().sorted().toList();
             for (int i = 0; i < valueList.size(); i++) {
                 StringBuilder a = new StringBuilder();
-                a.append(valueList.get(i));
+                a.append(valueList.get(i) + 1);
                 if(i != valueList.size() - 1) a.append(",");
                 if(last > valueList.get(i)) prefix.insert(0, a);
                 else prefix.append(a);
@@ -67,7 +66,11 @@ public class ChemicalCompound {
         }
 
         if(FuncGroup.funcVar != null) {
-            postfix += "ол";
+            switch (FuncGroup.funcVar.state) {
+                case 0 -> postfix += ("аль");
+                case 1 -> postfix += ("ол");
+                case 2 -> postfix += ("овая кислота");
+            }
         }
 
         int carbonCnt = mainChain.size();
@@ -78,10 +81,12 @@ public class ChemicalCompound {
     }
 
     private String parseName(int size) {
+        if(size - 2 > 10) return null;
         return names.get(size - 1);
     }
 
     private String parseMult(int size) {
+        if(size - 2 > 10) return null;
         return nums.get(size - 2);
     }
 

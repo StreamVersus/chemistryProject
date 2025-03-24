@@ -51,6 +51,7 @@ public class Backend {
     }
 
     public static GridElement getMatrix(Vector2D vec) {
+        if((int) vec.getX() >= 24 || (int) vec.getY() >= 18) return null;
         return formulaMatrix[(int) vec.getX()][(int) vec.getY()];
     }
 }

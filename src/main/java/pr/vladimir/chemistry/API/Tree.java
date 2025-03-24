@@ -1,5 +1,6 @@
 package pr.vladimir.chemistry.API;
 
+import pr.vladimir.chemistry.Backend;
 import pr.vladimir.chemistry.Tiles.Carbon;
 import pr.vladimir.chemistry.Tiles.FuncGroup;
 
@@ -83,6 +84,11 @@ public class Tree {
     public List<List<Carbon>> findAllLongestPaths() {
         if(adjacencyMap.isEmpty()) return null;
         int startNode = adjacencyMap.keySet().iterator().next();
+        FuncGroup workaround = null;
+        if(FuncGroup.funcVar != null && FuncGroup.funcVar.state == 1) {
+            workaround = FuncGroup.funcVar;
+            Backend.setMatrix(workaround.getBoxVec(), null);
+        }
 
         List<Integer> firstLongestPath = new ArrayList<>();
         findFarthestNode(startNode, -1, new ArrayList<>(), firstLongestPath);
@@ -96,6 +102,11 @@ public class Tree {
         List<List<Carbon>> longestInCarbon = new ArrayList<>();
         for (List<Integer> longestPath : longestPaths) {
             longestInCarbon.add(longestPath.stream().map(Carbon::getByID).toList());
+        }
+
+        if(FuncGroup.funcVar != null && FuncGroup.funcVar.state == 1) {
+            assert workaround != null;
+            Backend.setMatrix(workaround.getBoxVec(), workaround);
         }
 
         return longestInCarbon;
@@ -153,19 +164,31 @@ public class Tree {
         List<List<Carbon>> retList = new ArrayList<>();
         for (Carbon crossection : findCrossections()) {
             List<Integer> temp = new ArrayList<>(adjacencyMap.get(crossection.id));
-
-            temp.remove((Integer) longestPath.get(longestPath.indexOf(crossection) - 1).id);
-            temp.remove((Integer) longestPath.get(longestPath.indexOf(crossection) + 1).id);
-
-            retList.add(temp.stream().map(Carbon::getByID).toList());
-        }
-        int i = 0;
-        for (List<Carbon> carbons : retList) {
-            for (Carbon carbon : carbons) {
-                carbon.renderAnnotation(String.valueOf(i));
+            try {
+                temp.remove((Integer) longestPath.get(longestPath.indexOf(crossection) - 1).id);
+                temp.remove((Integer) longestPath.get(longestPath.indexOf(crossection) + 1).id);
+            } catch (Exception _) {
+                return new ArrayList<>();
             }
-            i++;
+
+            List<Carbon> radical = new ArrayList<>(temp.stream().map(Carbon::getByID).toList());
+
+            Carbon cursor = radical.getFirst();
+            Carbon head = crossection;
+            while (adjacencyMap.get(cursor.id).size() != 1) {
+                for (Integer i : adjacencyMap.get(cursor.id)) {
+                    if (i != head.id) {
+                        radical.add(Carbon.getByID(i));
+                        head = cursor;
+                        cursor = Carbon.getByID(i);
+                    }
+                }
+            }
+
+            radical.add(crossection);
+            retList.add(radical);
         }
+
         return retList;
     }
 }

@@ -132,7 +132,7 @@ public class Logic {
         }
 
         for (Carbon carbon : longestPath) {
-            //carbon.renderAnnotation(String.valueOf(longestPath.indexOf(carbon) + 1));
+            carbon.renderAnnotation(String.valueOf(longestPath.indexOf(carbon) + 1));
         }
 
         ChemicalCompound main = new ChemicalCompound(longestPath, radicals);

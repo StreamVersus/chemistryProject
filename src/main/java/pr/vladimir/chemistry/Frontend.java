@@ -30,7 +30,7 @@ public class Frontend extends Application {
     public static TextField field;
     private final Backend backend;
     public static final int gridSize = 50;
-    public static final Vector2D screenSize = new Vector2D(1200, 900);
+    public static final Vector2D screenSize = new Vector2D(1202, 892);
     public static boolean isVerbose = false;
     private static boolean inputLocked = false;
 
@@ -44,6 +44,7 @@ public class Frontend extends Application {
         Scene scene = new Scene(fxmlLoader.load(), screenSize.getX(), screenSize.getY());
         stage.setTitle("Organic Chemistry");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
 
         canvas = (Canvas) scene.lookup("#canvas");
@@ -140,12 +141,12 @@ public class Frontend extends Application {
         double width = canvas.getWidth();
         double height = canvas.getHeight();
 
-        for (double x = 0; x < width; x += gridSize) {
+        for (double x = 1; x < width; x += gridSize) {
             gc.setStroke(Color.GRAY);
             gc.strokeLine(x, 0, x, height);
         }
 
-        for (double y = 0; y < height; y += gridSize) {
+        for (double y = 1; y < height; y += gridSize) {
             gc.setStroke(Color.GRAY);
             gc.strokeLine(0, y, width, y);
         }

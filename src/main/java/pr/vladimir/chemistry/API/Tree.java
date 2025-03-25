@@ -16,10 +16,15 @@ public class Tree {
         }
     }
 
+    public List<Integer> getVertex(Carbon c) {
+        List<Integer> ret = adjacencyMap.get(c.id);
+        if(ret == null) return new ArrayList<>();
+        return ret;
+    }
+
     public void removeEdge(Carbon u, Carbon v) {
         adjacencyMap.get(u.id).remove((Integer) v.id);
         adjacencyMap.get(v.id).remove((Integer) u.id);
-        
     }
 
     public void removeVertex(Carbon u) {

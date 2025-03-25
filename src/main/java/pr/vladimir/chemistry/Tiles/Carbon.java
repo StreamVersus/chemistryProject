@@ -102,7 +102,7 @@ public class Carbon implements GridElement {
 
     @Override
     public boolean isClazz(Class<?> gridclass) {
-        return Carbon.class == gridclass || FuncGroup.class == gridclass;
+        return Carbon.class == gridclass;
     }
 
     @Override

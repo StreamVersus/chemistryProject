@@ -31,6 +31,7 @@ public class Backend {
         else {
             if (value == null) new FuncGroup(boxVec);
             else if (value.isClazz(FuncGroup.class)) {
+                if(value.isClazz(Carbon.class)) return;
                 ((FuncGroup) value).increment();
             }
         }

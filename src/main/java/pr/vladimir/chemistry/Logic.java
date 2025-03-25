@@ -138,5 +138,12 @@ public class Logic {
         ChemicalCompound main = new ChemicalCompound(longestPath, radicals);
 
         Frontend.renderName(main.getName());
+
+//        for (GridElement[] formulaMatrix : Backend.formulaMatrix) {
+//            for (GridElement elem : formulaMatrix) {
+//                if(elem == null) continue;
+//                System.out.println("new " + Arrays.stream(elem.getClass().toGenericString().split("\\.")).toList().getLast() + "(" + "new Vector2D(" + elem.getBoxVec().getX() + ", " + elem.getBoxVec().getY() + "));");
+//            }
+//        }
     }
 }

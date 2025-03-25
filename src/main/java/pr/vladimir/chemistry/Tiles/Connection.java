@@ -45,6 +45,13 @@ public class Connection implements GridElement {
         update();
     }
 
+    public Connection(Vector2D boxVec, int i) {
+        this(boxVec);
+        value = i;
+        render();
+        specialSet.add(this);
+    }
+
     @Override
     public void canUpdate() {
         canUpdate = true;

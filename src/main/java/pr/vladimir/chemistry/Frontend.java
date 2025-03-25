@@ -14,8 +14,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import pr.vladimir.chemistry.API.Vector2D;
-import pr.vladimir.chemistry.Tiles.GridElement;
+import pr.vladimir.chemistry.API.*;
+import pr.vladimir.chemistry.Tiles.*;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -33,6 +33,7 @@ public class Frontend extends Application {
     public static final Vector2D screenSize = new Vector2D(1202, 892);
     public static boolean isVerbose = false;
     private static boolean inputLocked = false;
+    public static Integer preset = -1;
 
     public Frontend() {
         this.backend = new Backend();
@@ -106,10 +107,13 @@ public class Frontend extends Application {
             state = 1;
         });
         drawGrid(canvas.getGraphicsContext2D());
+
+        Presets.setPreset(preset);
     }
 
     public static void main(String[] args) {
         if(args.length != 0) if(Objects.equals(args[0], "-v")) isVerbose = true;
+        if(args.length != 0) if(args[0].matches("-p.*")) preset = Integer.valueOf(args[0].substring(2));
         launch();
     }
 

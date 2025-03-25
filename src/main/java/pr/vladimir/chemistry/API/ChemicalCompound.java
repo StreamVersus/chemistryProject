@@ -1,5 +1,6 @@
 package pr.vladimir.chemistry.API;
 
+import pr.vladimir.chemistry.Logic;
 import pr.vladimir.chemistry.Tiles.Carbon;
 import pr.vladimir.chemistry.Tiles.Connection;
 import pr.vladimir.chemistry.Tiles.FuncGroup;
@@ -41,6 +42,12 @@ public class ChemicalCompound {
         }
 
         if(connectionIndex.toString().equals("-")) connectionIndex.delete(0, connectionIndex.length());
+        if(FuncGroup.funcVar != null && Logic.tree.getVertex(FuncGroup.funcVar).size() == 1) {
+            if(FuncGroup.funcVar.state == 1) {
+                int index = mainChain.indexOf(Carbon.getByID(Logic.tree.getVertex(FuncGroup.funcVar).getFirst()));
+                if (index != -1) connectionIndex.append("-").append(index + 1);
+            }
+        }
 
         StringBuilder prefix = new StringBuilder();
         Map<Integer, List<Integer>> organizedRadicals = organizeRadicals();

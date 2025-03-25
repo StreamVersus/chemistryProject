@@ -21,6 +21,15 @@ public class FuncGroup extends Carbon{
         else funcVar = this;
     }
 
+    public FuncGroup(Vector2D boxVec, Integer i) {
+        super(boxVec);
+        if(funcVar != null) this.destroy();
+        else funcVar = this;
+
+        state = i;
+        update();
+    }
+
     @Override
     public void render() {
         if(isForRemoval) return;
@@ -61,5 +70,10 @@ public class FuncGroup extends Carbon{
         isForRemoval = true;
         setMatrix(getBoxVec(), null);
         if(funcVar == this) funcVar = null;
+    }
+
+    @Override
+    public boolean isClazz(Class<?> gridclass) {
+        return FuncGroup.class == gridclass;
     }
 }

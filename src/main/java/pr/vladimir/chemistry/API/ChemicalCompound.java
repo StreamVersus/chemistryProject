@@ -67,7 +67,7 @@ public class ChemicalCompound {
             prefix.append("-");
 
             if(entry.getValue().size() - 1 != 0) prefix.append(parseMult(entry.getValue().size()));
-            prefix.append(parseName(entry.getKey())).append("ил");
+            prefix.append(parseName(entry.getKey() - 1)).append("ил");
             if(in != organizedRadicals.size()) prefix.append("-");
             in++;
         }

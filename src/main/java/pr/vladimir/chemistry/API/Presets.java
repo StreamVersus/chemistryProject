@@ -16,6 +16,10 @@ public class Presets {
             value.canUpdate();
             value.update();
         }
+        if(FuncGroup.funcVar != null) {
+            FuncGroup.funcVar.canUpdate();
+            FuncGroup.funcVar.update();
+        }
     }
 
     public static void first() {
@@ -52,21 +56,21 @@ public class Presets {
     }
 
     public static void third() {
-        new Carbon(new Vector2D(14.0, 8.0));
+        new Carbon(new Vector2D(12.0, 8.0));
         new Carbon(new Vector2D(14.0, 6.0));
         new Carbon(new Vector2D(12.0, 6.0));
         new Carbon(new Vector2D(10.0, 6.0));
         new Carbon(new Vector2D(10.0, 4.0));
         new Carbon(new Vector2D(8.0, 6.0));
 
-        new FuncGroup(new Vector2D(16.0, 6.0));
-
         new Connection(new Vector2D(9.0, 6.0));
         new Connection(new Vector2D(10.0, 5.0));
         new Connection(new Vector2D(11.0, 6.0));
         new Connection(new Vector2D(13.0, 6.0));
-        new Connection(new Vector2D(14.0, 7.0));
+        new Connection(new Vector2D(12.0, 7.0));
         new Connection(new Vector2D(15.0, 6.0));
+
+        new FuncGroup(new Vector2D(16.0, 6.0));
     }
 
     public static void fourth() {
@@ -82,13 +86,11 @@ public class Presets {
         new Connection(new Vector2D(8.0, 9.0));
         new Carbon(new Vector2D(8.0, 10.0));
         new Connection(new Vector2D(9.0, 6.0));
-        new Carbon(new Vector2D(10.0, 4.0));
-        new Connection(new Vector2D(10.0, 5.0));
         new Carbon(new Vector2D(10.0, 6.0));
         new Connection(new Vector2D(11.0, 6.0));
         new Carbon(new Vector2D(12.0, 6.0));
-        new Connection(new Vector2D(12.0, 7.0));
-        new Carbon(new Vector2D(12.0, 8.0));
+        new Connection(new Vector2D(10.0, 7.0));
+        new Carbon(new Vector2D(10.0, 8.0));
         new Connection(new Vector2D(13.0, 6.0));
         new Carbon(new Vector2D(14.0, 6.0));
         new Connection(new Vector2D(15.0, 6.0));

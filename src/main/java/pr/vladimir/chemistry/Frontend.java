@@ -2,7 +2,6 @@ package pr.vladimir.chemistry;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -17,8 +16,9 @@ import javafx.stage.Stage;
 import pr.vladimir.chemistry.API.*;
 import pr.vladimir.chemistry.Tiles.*;
 
-import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Objects;
+import java.util.Scanner;
 
 import static pr.vladimir.chemistry.Backend.formulaMatrix;
 
@@ -40,21 +40,21 @@ public class Frontend extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Frontend.class.getResource("project.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), screenSize.getX(), screenSize.getY());
+    public void start(Stage stage) {
+        Pane pane = new Pane();
+        Scene scene = new Scene(pane, screenSize.getX(), screenSize.getY());
         stage.setTitle("Organic Chemistry");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
 
-        canvas = (Canvas) scene.lookup("#canvas");
+        canvas = new Canvas();
+        pane.getChildren().add(canvas);
         canvas.setOnMouseClicked(this::handleMouseClicked);
         canvas.setWidth(screenSize.getX());
         canvas.setHeight(screenSize.getY());
         canvas.setLayoutY(40);
 
-        Pane pane = (Pane) scene.lookup("#pane");
         pane.minWidth(screenSize.getX());
         pane.minHeight(screenSize.getY());
         pane.maxWidth(screenSize.getX());
@@ -113,7 +113,15 @@ public class Frontend extends Application {
 
     public static void main(String[] args) {
         if(args.length != 0) if(Objects.equals(args[0], "-v")) isVerbose = true;
-        if(args.length != 0) if(args[0].matches("-p.*")) preset = Integer.valueOf(args[0].substring(2));
+        Scanner scan = new Scanner(System.in);
+        System.out.print("Введите номер пресета[0-5]: ");
+
+        try {
+            preset = scan.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.print("Неверное значение: принято стандартное значение null");
+        }
+
         launch();
     }
 

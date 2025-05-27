@@ -2,7 +2,6 @@ module pr.vladimir.chemistry {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
-    //requires openj9.jvm;
 
     exports pr.vladimir.chemistry;
     exports pr.vladimir.chemistry.Tiles;

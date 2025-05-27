@@ -116,8 +116,8 @@ public class Carbon implements GridElement {
 
         gc.clearRect(boxCoordVec.getX() + 2,
                 boxCoordVec.getY() + 2,
-                gridSize - 5,
-                gridSize - 5);
+                gridSize - 2,
+                gridSize - 2);
     }
 
     public void destroy() {
